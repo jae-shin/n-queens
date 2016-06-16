@@ -51,9 +51,6 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  if (n === 0) {
-
-  }
   var currentBoard = new Board({n: n});
 
   var recursiveHelper = function(rowIndex, currentBoard) { 
@@ -106,29 +103,3 @@ window.countNQueensSolutions = function(n) {
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
-
-// returns array of tuples [r, c] that are open 
-// Lwindow._openPositionsAt = function(rowIndex, currentBoard) {
-//   var results = [];
-//   for (var i = 0; i < currentBoard.get('n'); i++) {
-
-//     if (!currentBoard.hasAnyQueenConflictsOn(rowIndex, i)) {
-//       results.push([rowIndex, i]);
-//     }
-//   }
-//   return results;
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
