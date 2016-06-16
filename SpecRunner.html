@@ -8,6 +8,7 @@
     <script src="lib/underscore.js"></script>
     <script src="lib/backbone.js"></script>
 
+
     <!-- testing frameworks -->
     <link rel="stylesheet" href="lib/mocha/mocha.css">
     <script src="lib/mocha/mocha.js"></script>
@@ -20,6 +21,9 @@
         window.mochaPhantomJS ? mochaPhantomJS.run() : mocha.run();
       });
     </script>
+    <!-- <script src="lib/benchmark/lodash.js"></script> -->
+    <!-- <script src="lib/benchmark/platform.js"></script> -->
+    <!-- <script src="lib/benchmark/benchmark.js"></script> -->
 
     <!-- source files -->
     <script src="src/Board.js"></script>
@@ -30,6 +34,8 @@
     <script src="spec/BoardSpec.js"></script>
     <script src="spec/BoardViewSpec.js"></script>
     <script src="spec/solversSpec.js"></script>
+
+    <!-- <script src="spec/benchmarkTests.js"></script> -->
   </head>
   <body>
     <div id="mocha"></div>
