@@ -82,23 +82,20 @@ window.countNQueensSolutions = function(n) {
     return 1;
   }
   var solutionCount = 0;
-  var currentBoard = new Board({n: n});
-  var recursiveHelper = function(rowIndex, currentBoard) { 
-    if (rowIndex === currentBoard.get('n')) {
+  var nBits = Math.pow(2, n) - 1;
+  var tryQueenPlacement = function(ld, col, rd) {
+    if (col === nBits) {
       solutionCount++;
       return;
     }
-
-    for (var colIndex = 0; colIndex < currentBoard.get('n'); colIndex++) {
-      currentBoard.togglePiece(rowIndex, colIndex);
-      if (!currentBoard.hasAnyQueenConflictsOn(rowIndex, colIndex)) {
-        recursiveHelper(rowIndex + 1, currentBoard);
-      }
-      currentBoard.togglePiece(rowIndex, colIndex);
+    var possLocs = ~(ld | col | rd) & nBits;
+    while (possLocs !== 0) {
+      var tryLoc = possLocs & -possLocs;
+      possLocs -= tryLoc;
+      tryQueenPlacement((ld | tryLoc) << 1 & nBits, col | tryLoc, (rd | tryLoc) >>> 1);
     }
   };
-
-  recursiveHelper(0, currentBoard);
+  tryQueenPlacement(0, 0, 0);
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
