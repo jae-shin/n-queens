@@ -84,21 +84,43 @@ window.countNQueensSolutions = function(n) {
   var solutionCount = 0;
   var currentBoard = new Board({n: n});
   var recursiveHelper = function(rowIndex, currentBoard) { 
-    if (rowIndex === currentBoard.get('n')) {
+    if (rowIndex === n) {
       solutionCount++;
       return;
     }
 
-    for (var colIndex = 0; colIndex < currentBoard.get('n'); colIndex++) {
+    var endColIndex = n;
+    if (rowIndex === 0) {
+      if (n % 2 === 0) {
+        endColIndex = endColIndex / 2;
+      } else {
+        endColIndex = (endColIndex - 1) / 2;
+      }
+    }
+
+    for (var colIndex = 0; colIndex < endColIndex; colIndex++) {
       currentBoard.togglePiece(rowIndex, colIndex);
       if (!currentBoard.hasAnyQueenConflictsOn(rowIndex, colIndex)) {
         recursiveHelper(rowIndex + 1, currentBoard);
       }
       currentBoard.togglePiece(rowIndex, colIndex);
     }
+
+    if (rowIndex === 0 && n % 2 === 1) {
+      solutionCount *= 2;
+      currentBoard.togglePiece(rowIndex, endColIndex);
+      if (!currentBoard.hasAnyQueenConflictsOn(rowIndex, endColIndex)) {
+        recursiveHelper(rowIndex + 1, currentBoard);
+      }
+      currentBoard.togglePiece(rowIndex, endColIndex);
+    }
   };
 
   recursiveHelper(0, currentBoard);
+
+  if (n % 2 === 0) {
+    solutionCount *= 2; // only if n is even
+  }
 
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
