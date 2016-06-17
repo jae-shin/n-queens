@@ -77,26 +77,43 @@ window.findNQueensSolution = function(n) {
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
-window.countNQueensSolutions = function(n) {
-  if (n === 0) {
+window.countNQueensSolutions = (n, ld = 0, col = 0, rd = 0) => {
+  var nBits = ~(-1 << n);
+  var cnt = 0;
+  if (col === nBits) {
     return 1;
   }
-  var solutionCount = 0;
-  var nBits = Math.pow(2, n) - 1;
-  var tryQueenPlacement = function(ld, col, rd) {
-    if (col === nBits) {
-      solutionCount++;
-      return;
-    }
-    var possLocs = ~(ld | col | rd) & nBits;
-    while (possLocs !== 0) {
-      var tryLoc = possLocs & -possLocs;
-      possLocs -= tryLoc;
-      tryQueenPlacement((ld | tryLoc) << 1 & nBits, col | tryLoc, (rd | tryLoc) >>> 1);
-    }
-  };
-  tryQueenPlacement(0, 0, 0);
-
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  var possLocs = ~(ld | col | rd) & nBits;
+  while (possLocs !== 0) {
+    var tryLoc = possLocs & -possLocs;
+    possLocs -= tryLoc;
+    cnt += countNQueensSolutions(n, (ld | tryLoc) << 1 & nBits, col | tryLoc, (rd | tryLoc) >>> 1);
+  }
+  return cnt;
 };
+
+
+// Version with recursiveHelper function
+// window.countNQueensSolutions = function(n) {
+//   var solutionCount = 0;
+//   var nBits = ~(-1 << n);
+//   var tryQueenPlacement = function(ld, col, rd) {
+//     if (col === nBits) {
+//       solutionCount++;
+//       return;
+//     }
+//     var possLocs = ~(ld | col | rd) & nBits;
+//     while (possLocs !== 0) {
+//       var tryLoc = possLocs & -possLocs;
+//       possLocs -= tryLoc;
+//       tryQueenPlacement((ld | tryLoc) << 1 & nBits, col | tryLoc, (rd | tryLoc) >>> 1);
+//     }
+//   };
+//   tryQueenPlacement(0, 0, 0);
+
+//   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+//   return solutionCount;
+// };
+
+
+
