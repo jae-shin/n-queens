@@ -83,6 +83,7 @@ window.countNQueensSolutions = (n, ld = 0, col = 0, rd = 0) => {
   if (col === nBits) {
     return 1;
   }
+
   var possLocs = ~(ld | col | rd) & nBits;
   while (possLocs !== 0) {
     var tryLoc = possLocs & -possLocs;
@@ -92,28 +93,85 @@ window.countNQueensSolutions = (n, ld = 0, col = 0, rd = 0) => {
   return cnt;
 };
 
+/*****************************************************
+ ******** Version with recursiveHelper function *******
+ ******************************************************
 
-// Version with recursiveHelper function
-// window.countNQueensSolutions = function(n) {
-//   var solutionCount = 0;
-//   var nBits = ~(-1 << n);
-//   var tryQueenPlacement = function(ld, col, rd) {
-//     if (col === nBits) {
-//       solutionCount++;
-//       return;
-//     }
-//     var possLocs = ~(ld | col | rd) & nBits;
-//     while (possLocs !== 0) {
-//       var tryLoc = possLocs & -possLocs;
-//       possLocs -= tryLoc;
-//       tryQueenPlacement((ld | tryLoc) << 1 & nBits, col | tryLoc, (rd | tryLoc) >>> 1);
-//     }
-//   };
-//   tryQueenPlacement(0, 0, 0);
+window.countNQueensSolutions = function(n) {
+  var solutionCount = 0;
+  var nBits = ~(-1 << n);
+  var tryQueenPlacement = function(ld, col, rd) {
+    if (col === nBits) {
+      solutionCount++;
+      return;
+    }
+    var possLocs = ~(ld | col | rd) & nBits;
+    while (possLocs !== 0) {
+      var tryLoc = possLocs & -possLocs;
+      possLocs -= tryLoc;
+      tryQueenPlacement((ld | tryLoc) << 1 & nBits, col | tryLoc, (rd | tryLoc) >>> 1);
+    }
+  };
+  tryQueenPlacement(0, 0, 0);
 
-//   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-//   return solutionCount;
-// };
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  return solutionCount;
+};
 
+ ******************************************************/
 
+/******************************************************
+ ********* Version that optimizes for symmetry ********
+ ******************************************************
 
+window.countNQueensSolutions = (n, ld = 0, col = 0, rd = 0) => {
+  var nBits = ~(-1 << n);
+  var cnt = 0;
+  if (col === nBits) {
+    return 1;
+  }
+
+  var solutionCount = 0;
+  var currentBoard = new Board({n: n});
+  var recursiveHelper = function(rowIndex, currentBoard) { 
+    if (rowIndex === n) {
+      solutionCount++;
+      return;
+    }
+
+    var endColIndex = n;
+    if (rowIndex === 0) {
+      if (n % 2 === 0) {
+        endColIndex = endColIndex / 2;
+      } else {
+        endColIndex = (endColIndex - 1) / 2;
+      }
+    }
+
+    for (var colIndex = 0; colIndex < endColIndex; colIndex++) {
+      currentBoard.togglePiece(rowIndex, colIndex);
+      if (!currentBoard.hasAnyQueenConflictsOn(rowIndex, colIndex)) {
+        recursiveHelper(rowIndex + 1, currentBoard);
+      }
+      currentBoard.togglePiece(rowIndex, colIndex);
+    }
+
+    if (rowIndex === 0 && n % 2 === 1) {
+      solutionCount *= 2;
+      currentBoard.togglePiece(rowIndex, endColIndex);
+      if (!currentBoard.hasAnyQueenConflictsOn(rowIndex, endColIndex)) {
+        recursiveHelper(rowIndex + 1, currentBoard);
+      }
+      currentBoard.togglePiece(rowIndex, endColIndex);
+    }
+  };
+
+  if (n % 2 === 0) {
+    solutionCount *= 2; // only if n is even
+  }
+
+  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  return solutionCount;
+};
+
+ *****************************************************
